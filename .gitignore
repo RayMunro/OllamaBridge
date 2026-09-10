@@ -1,0 +1,4 @@
+.build/
+.swiftpm/
+OllamaBridge.app/
+.DS_Store
