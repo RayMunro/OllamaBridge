@@ -1,4 +1,5 @@
 .build/
 .swiftpm/
 OllamaBridge.app/
+*.pkg
 .DS_Store
