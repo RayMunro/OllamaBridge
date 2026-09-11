@@ -20,7 +20,7 @@ final class AppState: ObservableObject {
     let proxy = ProxyServer()
 
     init() {
-        remoteHost = UserDefaults.standard.string(forKey: "remoteHost") ?? "192.168.1.100"
+        remoteHost = UserDefaults.standard.string(forKey: "remoteHost") ?? ""
         remotePort = UserDefaults.standard.string(forKey: "remotePort") ?? "11434"
         launchAtLogin = LoginItemManager.isEnabled
         selectedModel = UserDefaults.standard.string(forKey: "selectedModel") ?? ""
@@ -28,6 +28,10 @@ final class AppState: ObservableObject {
     }
 
     func start() {
+        guard !remoteHost.trimmingCharacters(in: .whitespaces).isEmpty else {
+            proxy.statusMessage = "Enter a remote host first"
+            return
+        }
         guard let portValue = UInt16(remotePort) else {
             proxy.statusMessage = "Invalid port"
             return

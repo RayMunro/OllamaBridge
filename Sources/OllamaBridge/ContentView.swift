@@ -27,9 +27,13 @@ struct ContentView: View {
             GroupBox("Remote Ollama Server") {
                 VStack(alignment: .leading, spacing: 10) {
                     LabeledContent("Host") {
-                        TextField("192.168.1.100", text: $appState.remoteHost)
-                            .textFieldStyle(.roundedBorder)
-                            .disabled(proxy.isRunning)
+                        HStack {
+                            TextField("192.168.1.100", text: $appState.remoteHost)
+                                .textFieldStyle(.roundedBorder)
+                                .disabled(proxy.isRunning)
+                            DiscoverOllamaView(appState: appState)
+                                .disabled(proxy.isRunning)
+                        }
                     }
                     LabeledContent("Port") {
                         TextField("11434", text: $appState.remotePort)
