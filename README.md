@@ -66,10 +66,14 @@ That should return JSON, not a connection error.
 
 1. **Quit any local Ollama** on your Mac first — OllamaBridge needs port 11434 for itself, and a locally running Ollama will already be holding it.
 2. Launch OllamaBridge. It appears both in the Dock and as a menu bar icon.
-3. Enter the remote server's **Host** and **Port**, then click **Start**.
+3. Enter the remote server's **Host** and **Port**, then click **Start** — or click the magnifying-glass button next to Host to find it automatically (see below).
 4. Any local app or script that talks to `http://localhost:11434` now transparently reaches the remote server.
 
 Closing the main window doesn't quit the app — it keeps running via the menu bar icon. Use **Open OllamaBridge…** from the menu bar to bring the window back, or **Quit OllamaBridge** to fully exit.
+
+### Finding a server automatically
+
+Ollama has no discovery protocol (no mDNS/Bonjour advertisement), so the magnifying-glass button next to Host works by probing instead: it sweeps every address on your Mac's current `/24` subnet, checking `/api/version` on port 11434 with a short timeout, and lists whatever responds. Pick one to fill in Host and Port. This only finds servers on the same subnet as your Mac — it won't reach across VLANs or a VPN with a different range.
 
 ### Model management
 
