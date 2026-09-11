@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Resources/icon.png" width="128" height="128" alt="OllamaBridge icon">
+</p>
+
 # OllamaBridge
 
 A macOS menu bar app that makes a remote [Ollama](https://ollama.com) server look like it's running locally.
