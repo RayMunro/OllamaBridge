@@ -6,11 +6,11 @@
 
 A macOS menu bar app that makes a remote [Ollama](https://ollama.com) server look like it's running locally.
 
-Point any app at `http://localhost:11434` — the address Ollama uses by default — and OllamaBridge transparently forwards every request to an Ollama instance running on another machine on your network. No changes needed in the client app, no custom base URLs to configure.
+Point any app at `http://localhost:11434` (the address Ollama uses by default) and OllamaBridge transparently forwards every request to an Ollama instance running on another machine on your network. No changes needed in the client app, no custom base URLs to configure.
 
 ## How it works
 
-OllamaBridge is a raw TCP pass-through proxy, not an HTTP proxy. It doesn't parse or understand Ollama's API — it just relays bytes in both directions between `localhost:11434` and `<remote-host>:<remote-port>`. That means streaming generation, chunked responses, and any current or future Ollama endpoint all work automatically, with nothing to update as the API evolves.
+OllamaBridge is a raw TCP pass-through proxy, not an HTTP proxy. It doesn't parse or understand Ollama's API; it just relays bytes in both directions between `localhost:11434` and `<remote-host>:<remote-port>`. That means streaming generation, chunked responses, and any current or future Ollama endpoint all work automatically, with nothing to update as the API evolves.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ OllamaBridge is a raw TCP pass-through proxy, not an HTTP proxy. It doesn't pars
 ### Option 1: Download the installer
 
 1. Grab the latest `.pkg` from [Releases](https://github.com/RayMunro/OllamaBridge/releases)
-2. Double-click it and follow the installer — it places `OllamaBridge.app` in `/Applications`
+2. Double-click it and follow the installer, which places `OllamaBridge.app` in `/Applications`
 
 The app isn't signed with a paid Apple Developer ID, so Gatekeeper will flag it as from an unidentified developer the first time:
 
@@ -64,28 +64,30 @@ That should return JSON, not a connection error.
 
 ## Using OllamaBridge
 
-1. **Quit any local Ollama** on your Mac first — OllamaBridge needs port 11434 for itself, and a locally running Ollama will already be holding it.
+1. **Quit any local Ollama** on your Mac first. OllamaBridge needs port 11434 for itself, and a locally running Ollama will already be holding it.
 2. Launch OllamaBridge. It appears both in the Dock and as a menu bar icon.
-3. Enter the remote server's **Host** and **Port**, then click **Start** — or click the magnifying-glass button next to Host to find it automatically (see below).
+3. Enter the remote server's **Host** and **Port**, then click **Start**, or click the magnifying-glass button next to Host to find it automatically (see below).
 4. Any local app or script that talks to `http://localhost:11434` now transparently reaches the remote server.
 
-Closing the main window doesn't quit the app — it keeps running via the menu bar icon. Use **Open OllamaBridge…** from the menu bar to bring the window back, or **Quit OllamaBridge** to fully exit.
+Closing the main window doesn't quit the app; it keeps running via the menu bar icon. Use **Open OllamaBridge…** from the menu bar to bring the window back, or **Quit OllamaBridge** to fully exit.
 
 ### Finding a server automatically
 
-Ollama has no discovery protocol (no mDNS/Bonjour advertisement), so the magnifying-glass button next to Host works by probing instead: it sweeps every address on your Mac's current `/24` subnet, checking `/api/version` on port 11434 with a short timeout, and lists whatever responds. Pick one to fill in Host and Port. This only finds servers on the same subnet as your Mac — it won't reach across VLANs or a VPN with a different range.
+Ollama has no discovery protocol (no mDNS/Bonjour advertisement), so the magnifying-glass button next to Host works by probing instead: it sweeps every address on your Mac's current `/24` subnet, checking `/api/version` on port 11434 with a short timeout, and lists whatever responds. Pick one to fill in Host and Port. This only finds servers on the same subnet as your Mac, so it won't reach across VLANs or a VPN with a different range.
+
+**Fixed in 1.3.0:** earlier builds could fail to find anything on the network. The build script wasn't signing the finished app bundle, only the raw binary, so macOS couldn't associate the Local Network permission with the app and every scan silently failed. If you're upgrading from an older version and still see no results, run `tccutil reset LocalNetwork com.raymondmunro.ollamabridge` once so macOS re-prompts for permission.
 
 ### Model management
 
-- **Check Version** — shows the remote Ollama server's version
-- **Model** picker — lists models installed on the remote server; refresh with the circular-arrow button
-- **Delete** (trash icon) — removes the selected model from the remote server, after confirmation. This is irreversible; the model has to be re-downloaded to use it again.
-- **Models directory** — since Ollama's API doesn't expose where models are stored on disk, this is a path you enter yourself (the models directory configured on the remote server). Once set, OllamaBridge computes and displays the expected manifest path for whichever model is selected.
-- **Download a Model** — enter a model name (e.g. `llama3.2:3b`) and click **Pull** to download it directly onto the remote server, with a live progress bar. **Cancel** aborts the transfer.
+- **Check Version**: shows the remote Ollama server's version
+- **Model** picker: lists models installed on the remote server; refresh with the circular-arrow button
+- **Delete** (trash icon): removes the selected model from the remote server, after confirmation. This is irreversible; the model has to be re-downloaded to use it again.
+- **Models directory**: since Ollama's API doesn't expose where models are stored on disk, this is a path you enter yourself (the models directory configured on the remote server). Once set, OllamaBridge computes and displays the expected manifest path for whichever model is selected.
+- **Download a Model**: enter a model name (e.g. `llama3.2:3b`) and click **Pull** to download it directly onto the remote server, with a live progress bar. **Cancel** aborts the transfer.
 
 ### Other settings
 
-- **Launch at login** — registers OllamaBridge to start automatically when you log in
+- **Launch at login**: registers OllamaBridge to start automatically when you log in
 
 ## License
 
