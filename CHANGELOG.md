@@ -2,6 +2,11 @@
 
 All notable changes to OllamaBridge are documented here.
 
+## 1.4.0 (2026-09-26)
+
+- Added CHANGELOG.md and linked it from the README.
+- Documented the 1.3.0 LAN discovery fix and the `tccutil reset` step in the README.
+
 ## 1.3.0 (2026-09-26)
 
 - Fixed LAN discovery finding no Ollama instances. The build script only signed the raw binary, not the assembled app bundle, so macOS couldn't seal `NSLocalNetworkUsageDescription` into the app's identity and every network scan silently failed. The whole bundle is now properly signed.
