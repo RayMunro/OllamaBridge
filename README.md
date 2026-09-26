@@ -89,6 +89,10 @@ Ollama has no discovery protocol (no mDNS/Bonjour advertisement), so the magnify
 
 - **Launch at login**: registers OllamaBridge to start automatically when you log in
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
 ## License
 
 © 2026 Raymond Munro
