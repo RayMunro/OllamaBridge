@@ -82,7 +82,7 @@ final class NetworkScanner: ObservableObject {
     private struct VersionPayload: Decodable { let version: String }
 
     private static func currentIPv4Address() -> String? {
-        var address: String?
+        var candidates: [(name: String, ip: String)] = []
         var ifaddrPtr: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&ifaddrPtr) == 0, let firstAddr = ifaddrPtr else { return nil }
         defer { freeifaddrs(ifaddrPtr) }
@@ -98,12 +98,16 @@ final class NetworkScanner: ObservableObject {
             getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
                         &hostBuffer, socklen_t(hostBuffer.count), nil, 0, NI_NUMERICHOST)
             let ip = String(cString: hostBuffer)
-            if ip != "127.0.0.1" {
-                address = ip
-                if name == "en0" { break }
-            }
+            // Skip loopback and link-local/APIPA addresses (e.g. an idle
+            // Thunderbolt Bridge interface self-assigns 169.254.x.x) - these
+            // aren't a real LAN subnet and would make the scan sweep the
+            // wrong range entirely.
+            guard ip != "127.0.0.1", !ip.hasPrefix("169.254.") else { continue }
+            candidates.append((name, ip))
         }
-        return address
+        // Prefer en0 (the typical Wi-Fi/primary interface) when present;
+        // otherwise fall back to the first other valid interface found.
+        return candidates.first(where: { $0.name == "en0" })?.ip ?? candidates.first?.ip
     }
 
     private static func subnetPrefix(from ip: String) -> String {
